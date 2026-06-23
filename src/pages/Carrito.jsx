@@ -5,23 +5,18 @@ import Breadcrumb from '../components/Breadcrumb'
 
 function Carrito() {
   const {
-    carrito,
-    quitarDelCarrito,
-    cambiarCantidad,
-    vaciarCarrito,
-    total,
-    totalConDescuento,
-    descuento,
-    aplicarCupon,
-  } = useCart()
+  carrito, quitarDelCarrito, cambiarCantidad,
+  total, totalConDescuento, descuento,
+  aplicarCupon, confirmarCompra,
+} = useCart()
 
   const [confirmado, setConfirmado] = useState(false)
   const [codigoCupon, setCodigoCupon] = useState('')
 
   const handleCheckout = () => {
-    vaciarCarrito()
-    setConfirmado(true)
-  }
+  confirmarCompra()
+  setConfirmado(true)
+}
 
   const handleAplicarCupon = () => {
     aplicarCupon(codigoCupon)

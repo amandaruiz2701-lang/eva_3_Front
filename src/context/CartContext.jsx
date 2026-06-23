@@ -61,6 +61,23 @@ export function CartProvider({ children }) {
       return false
     }
   }
+  const [historial, setHistorial] = useLocalStorage('historial', [])
+
+  const confirmarCompra = () => {
+    if (carrito.length === 0) return
+    const pedido = {
+      id: Date.now(),
+      fecha: new Date().toLocaleDateString('es-CL', {
+        year: 'numeric', month: 'long', day: 'numeric',
+      }),
+      items: [...carrito],
+      total: totalConDescuento,
+      descuentoAplicado: descuento,
+    }
+    setHistorial((prev) => [pedido, ...prev])
+    vaciarCarrito()
+    setDescuento(0)
+  }
 
   const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0)
   const cantidadTotal = carrito.reduce((acc, item) => acc + item.cantidad, 0)
@@ -79,6 +96,8 @@ export function CartProvider({ children }) {
         totalConDescuento,
         descuento,
         cantidadTotal,
+        historial,
+        confirmarCompra,
       }}
     >
       {children}

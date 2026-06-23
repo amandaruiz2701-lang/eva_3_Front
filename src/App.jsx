@@ -10,6 +10,9 @@ import Favoritos from './pages/Favoritos'
 import Contacto from './pages/Contacto'
 import Carrito from './pages/Carrito'
 import NotFound from './pages/NotFound'
+import Historial from './pages/Historial'
+import Login from './pages/Login'
+import Registro from './pages/Registro'
 import './App.css'
 
 function App() {
@@ -59,6 +62,9 @@ function App() {
         />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/carrito" element={<Carrito />} />
+        <Route path="/historial" element={<Historial />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
 
 function Navbar({ cantidadFavoritos }) {
@@ -8,6 +9,7 @@ function Navbar({ cantidadFavoritos }) {
   const [abierto, setAbierto] = useState(false)
   const linkClass = ({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`
   const cerrarMenu = () => setAbierto(false)
+  const { usuario, cerrarSesion } = useAuth()
 
   return (
     <nav className="navbar navbar-custom sticky-top">
@@ -34,11 +36,21 @@ function Navbar({ cantidadFavoritos }) {
               <span className="pill-icon">🛒</span>
               <span>{cantidadTotal}</span>
             </NavLink>
-            <button
-              className="hamburger d-md-none"
-              onClick={() => setAbierto((a) => !a)}
-              aria-label="Menú"
-            >
+
+            {usuario ? (
+              <div className="user-menu d-none d-md-flex">
+                <NavLink to="/historial" className="nav-pill">📦 Mis pedidos</NavLink>
+                <button className="nav-pill btn-cerrar" onClick={cerrarSesion}>
+                  Salir
+                </button>
+              </div>
+            ) : (
+              <NavLink to="/login" className="nav-pill nav-pill-accent d-none d-md-flex">
+                Ingresar
+              </NavLink>
+            )}
+
+            <button className="hamburger d-md-none" onClick={() => setAbierto((a) => !a)}>
               {abierto ? '✕' : '☰'}
             </button>
           </div>
