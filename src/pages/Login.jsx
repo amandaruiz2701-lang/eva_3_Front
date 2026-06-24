@@ -1,67 +1,93 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import useForm from '../hooks/useForm'
+import FormField from '../components/FormField'
+import PageTransition from '../components/PageTransition'
+
+const validaciones = {
+  email: (v) => {
+    if (!v) return 'El correo es obligatorio.'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Ingresa un correo válido.'
+  },
+  password: (v) => {
+    if (!v) return 'La contraseña es obligatoria.'
+    if (v.length < 6) return 'Mínimo 6 caracteres.'
+  },
+}
 
 function Login() {
+  // 1. Extraemos las funciones de los contextos y hooks correspondientes
   const { iniciarSesion } = useAuth()
   const { showToast } = useToast()
-  const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [error, setError] = useState('')
+  
+  const { 
+    values, 
+    errors, 
+    touched, 
+    handleChange, 
+    handleBlur, 
+    validarTodo 
+  } = useForm({ email: '', password: '' }, validaciones)
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+  const navigate = useNavigate()
+  const location = useLocation()
+  const destino = location.state?.from || '/'
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    setError('')
-    const resultado = iniciarSesion(form.email, form.password)
+    if (!validarTodo()) return
+    
+    const resultado = iniciarSesion(values.email, values.password)
     if (resultado.ok) {
       showToast('Bienvenido de nuevo 👋')
-      navigate('/')
+      navigate(destino, { replace: true })  // ← vuelve a donde estaba
     } else {
-      setError(resultado.mensaje)
+      showToast(resultado.mensaje, 'error')
     }
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <h2 className="section-title text-center">Iniciar sesión</h2>
-
-        {error && <p className="auth-error">{error}</p>}
-
-        <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-          <input
-            className="form-control filter-input"
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            value={form.email}
-            onChange={handleChange}
-            required
+    <PageTransition>
+      <div className="auth-page">
+        <div className="auth-card">
+          <h2 className="section-title text-center mb-4">Iniciar sesión</h2>
+          <form onSubmit={handleSubmit} className="d-flex flex-column gap-3" noValidate>
+            <FormField
+              label="Correo electrónico"
+              name="email"
+              type="email"
+              placeholder="tu@correo.com"
+              value={values.email}
+              onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.email}
+            touched={touched.email}
           />
-          <input
-            className="form-control filter-input"
-            type="password"
+          <FormField
+            label="Contraseña"
             name="password"
-            placeholder="Contraseña"
-            value={form.password}
+            type="password"
+            placeholder="••••••••"
+            value={values.password}
             onChange={handleChange}
-            required
+            onBlur={handleBlur}
+            error={errors.password}
+            touched={touched.password}
           />
-          <button type="submit" className="btn-cart w-100 py-2">
+          <button type="submit" className="btn-cart w-100 py-2 mt-1">
             Ingresar
           </button>
-        </form>
-
-        <p className="text-center mt-3" style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-          ¿No tenés cuenta?{' '}
-          <Link to="/registro" style={{ color: 'var(--accent-2)' }}>Registrarse</Link>
-        </p>
+          </form>
+          <p className="text-center mt-3" style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            ¿No tienes cuenta?{' '}
+            <Link to="/registro" style={{ color: 'var(--accent-2)' }}>Registrarse</Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </PageTransition>
   )
 }
 
 export default Login
+

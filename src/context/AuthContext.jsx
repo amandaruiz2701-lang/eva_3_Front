@@ -28,8 +28,44 @@ export function AuthProvider({ children }) {
 
   const cerrarSesion = () => setUsuario(null)
 
+  const actualizarPerfil = (nombre, email) => {
+    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]')
+    const duplicado = usuarios.find((u) => u.email === email && u.id !== usuario.id)
+    if (duplicado) return { ok: false, mensaje: 'Ese correo ya está en uso.' }
+
+    const actualizados = usuarios.map((u) =>
+      u.id === usuario.id ? { ...u, nombre, email } : u
+    )
+    localStorage.setItem('usuarios', JSON.stringify(actualizados))
+    setUsuario((prev) => ({ ...prev, nombre, email }))
+    return { ok: true }
+  }
+
+  const cambiarPassword = (passwordActual, passwordNuevo) => {
+    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]')
+    const encontrado = usuarios.find((u) => u.id === usuario.id)
+    if (!encontrado || encontrado.password !== passwordActual) {
+      return { ok: false, mensaje: 'La contraseña actual es incorrecta.' }
+    }
+
+    const actualizados = usuarios.map((u) =>
+      u.id === usuario.id ? { ...u, password: passwordNuevo } : u
+    )
+    localStorage.setItem('usuarios', JSON.stringify(actualizados))
+    return { ok: true }
+  }
+
   return (
-    <AuthContext.Provider value={{ usuario, registrar, iniciarSesion, cerrarSesion }}>
+    <AuthContext.Provider
+      value={{
+        usuario,
+        registrar,
+        iniciarSesion,
+        cerrarSesion,
+        actualizarPerfil,
+        cambiarPassword,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

@@ -3,70 +3,140 @@ import { NavLink } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
+import ThemeToggle from './ThemeToggle'
 
 function Navbar({ cantidadFavoritos }) {
   const { cantidadTotal } = useCart()
+  const { usuario, cerrarSesion } = useAuth()
   const [abierto, setAbierto] = useState(false)
+
   const linkClass = ({ isActive }) => `nav-link-custom ${isActive ? 'active' : ''}`
   const cerrarMenu = () => setAbierto(false)
-  const { usuario, cerrarSesion } = useAuth()
 
   return (
     <nav className="navbar navbar-custom sticky-top">
       <div className="container">
         <div className="navbar-inner">
+
+          {/* Brand */}
           <NavLink to="/" className="brand d-flex align-items-center gap-2" onClick={cerrarMenu}>
-            <Logo width={32} height={38} />
+            <Logo width={28} height={33} />
             Tech<span className="brand-accent">Nova</span>
           </NavLink>
 
+          {/* Links desktop */}
           <div className="nav-links d-none d-md-flex">
             <NavLink to="/" className={linkClass} end>Inicio</NavLink>
             <NavLink to="/catalogo" className={linkClass}>Catálogo</NavLink>
-            <NavLink to="/favoritos" className={linkClass}>Favoritos</NavLink>
+            {usuario && (
+              <NavLink to="/favoritos" className={linkClass}>Favoritos</NavLink>
+            )}
             <NavLink to="/contacto" className={linkClass}>Contacto</NavLink>
           </div>
 
-          <div className="nav-actions">
-            <NavLink to="/favoritos" className="nav-pill d-none d-md-flex">
-              <span className="pill-icon">♡</span>
-              <span>{cantidadFavoritos}</span>
-            </NavLink>
-            <NavLink to="/carrito" className="nav-pill nav-pill-accent d-none d-md-flex">
-              <span className="pill-icon">🛒</span>
-              <span>{cantidadTotal}</span>
-            </NavLink>
-
+          {/* Acciones desktop */}
+          <div className="nav-actions d-none d-md-flex">
+            <ThemeToggle />
             {usuario ? (
-              <div className="user-menu d-none d-md-flex">
-                <NavLink to="/historial" className="nav-pill">📦 Mis pedidos</NavLink>
-                <button className="nav-pill btn-cerrar" onClick={cerrarSesion}>
-                  Salir
-                </button>
-              </div>
+              <>
+                <NavLink to="/favoritos" className="nav-pill">
+                  <span className="pill-icon">♡</span>
+                  <span>{cantidadFavoritos}</span>
+                </NavLink>
+                <NavLink to="/carrito" className="nav-pill nav-pill-accent">
+                  <span className="pill-icon">🛒</span>
+                  <span>{cantidadTotal}</span>
+                </NavLink>
+                <NavLink to="/historial" className="nav-pill">
+                  <span className="pill-icon">📦</span>
+                  <span>Pedidos</span>
+                </NavLink>
+                <div className="nav-user">
+                  <NavLink to="/perfil" className="user-nombre" style={{ textDecoration: 'none' }}>
+                    {usuario.nombre.split(' ')[0]}
+                  </NavLink>
+                  <button className="btn-salir" onClick={cerrarSesion}>Salir</button>
+                </div>
+              </>
             ) : (
-              <NavLink to="/login" className="nav-pill nav-pill-accent d-none d-md-flex">
-                Ingresar
-              </NavLink>
+              <>
+                <NavLink to="/carrito" className="nav-pill nav-pill-accent">
+                  <span className="pill-icon">🛒</span>
+                  <span>{cantidadTotal}</span>
+                </NavLink>
+                <NavLink to="/login" className="nav-pill">Ingresar</NavLink>
+                <NavLink to="/registro" className="nav-pill nav-pill-accent">Registrarse</NavLink>
+              </>
             )}
-
-            <button className="hamburger d-md-none" onClick={() => setAbierto((a) => !a)}>
-              {abierto ? '✕' : '☰'}
-            </button>
           </div>
+
+          {/* Hamburguesa mobile */}
+          <button
+            className="hamburger d-md-none"
+            onClick={() => setAbierto((a) => !a)}
+            aria-label="Abrir menú"
+          >
+            {abierto ? '✕' : '☰'}
+          </button>
         </div>
 
+        {/* Menú mobile */}
         {abierto && (
           <div className="mobile-menu">
+
+            {/* Toggle de tema en mobile ← nuevo */}
+            <div className="d-flex align-items-center justify-content-between">
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Apariencia</span>
+              <ThemeToggle />
+            </div>
+
+            <div className="mobile-divider" />
+
             <NavLink to="/" className={linkClass} end onClick={cerrarMenu}>Inicio</NavLink>
             <NavLink to="/catalogo" className={linkClass} onClick={cerrarMenu}>Catálogo</NavLink>
-            <NavLink to="/favoritos" className={linkClass} onClick={cerrarMenu}>
-              Favoritos ♡ {cantidadFavoritos}
-            </NavLink>
-            <NavLink to="/carrito" className={linkClass} onClick={cerrarMenu}>
-              Carrito 🛒 {cantidadTotal}
-            </NavLink>
             <NavLink to="/contacto" className={linkClass} onClick={cerrarMenu}>Contacto</NavLink>
+
+            <div className="mobile-divider" />
+
+            {usuario ? (
+              <>
+                <NavLink to="/favoritos" className={linkClass} onClick={cerrarMenu}>
+                  ♡ Favoritos {cantidadFavoritos > 0 && `(${cantidadFavoritos})`}
+                </NavLink>
+                <NavLink to="/carrito" className={linkClass} onClick={cerrarMenu}>
+                  🛒 Carrito {cantidadTotal > 0 && `(${cantidadTotal})`}
+                </NavLink>
+                <NavLink to="/historial" className={linkClass} onClick={cerrarMenu}>
+                  📦 Mis pedidos
+                </NavLink>
+                <NavLink to="/perfil" className={linkClass} onClick={cerrarMenu}>
+                  👤 Mi perfil
+                </NavLink>
+                <div className="mobile-divider" />
+                <div className="mobile-user">
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                    Hola,{' '}
+                    <strong style={{ color: 'var(--text)' }}>
+                      {usuario.nombre.split(' ')[0]}
+                    </strong>
+                  </span>
+                  <button
+                    className="btn-salir"
+                    onClick={() => { cerrarSesion(); cerrarMenu() }}
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <NavLink to="/carrito" className={linkClass} onClick={cerrarMenu}>
+                  🛒 Carrito {cantidadTotal > 0 && `(${cantidadTotal})`}
+                </NavLink>
+                <NavLink to="/login" className={linkClass} onClick={cerrarMenu}>Ingresar</NavLink>
+                <NavLink to="/registro" className={linkClass} onClick={cerrarMenu}>Registrarse</NavLink>
+              </>
+            )}
           </div>
         )}
       </div>

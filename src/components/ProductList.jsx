@@ -1,18 +1,29 @@
+import { motion } from 'framer-motion'
+import { staggerContainer, staggerItem } from '../utils/animations'
 import ProductCard from './ProductCard'
 
 function ProductList({ products, favoritos, onToggleFavorito }) {
   return (
-    <div className="row g-4">
+    <motion.div
+      className="row g-4"
+      variants={staggerContainer}
+      initial="initial"
+      animate="animate"
+    >
       {products.map((p) => (
-        <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={p.id}>
+        <motion.div
+          className="col-12 col-sm-6 col-md-4 col-lg-3"
+          key={p.id}
+          variants={staggerItem}
+        >
           <ProductCard
             product={p}
             esFavorito={favoritos.includes(p.id)}
             onToggleFavorito={onToggleFavorito}
           />
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   )
 }
 

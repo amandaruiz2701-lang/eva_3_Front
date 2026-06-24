@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
 import Hero from '../components/Hero'
 import ProductList from '../components/ProductList'
+import PageTransition from '../components/PageTransition'
 
 function Home({ products }) {
   const destacados = products.slice(0, 4)
-
   return (
-    <>
+    <PageTransition>
       <Hero />
       <div className="container py-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
@@ -15,7 +15,7 @@ function Home({ products }) {
         </div>
         <ProductList products={destacados} favoritos={[]} onToggleFavorito={() => {}} />
       </div>
-    </>
+    </PageTransition>
   )
 }
 
