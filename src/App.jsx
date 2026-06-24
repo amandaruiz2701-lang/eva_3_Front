@@ -34,7 +34,9 @@ function App() {
       <Navbar cantidadFavoritos={favoritos.length} />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Home products={products} />} />
+          <Route path="/" element={<Home products={products}
+            favoritos={favoritos}
+            onToggleFavorito={toggleFavorito} />} />
           <Route
             path="/catalogo"
             element={

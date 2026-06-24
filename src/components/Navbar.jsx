@@ -18,80 +18,84 @@ function Navbar({ cantidadFavoritos }) {
       <div className="container">
         <div className="navbar-inner">
 
-          {/* Brand */}
-          <NavLink to="/" className="brand d-flex align-items-center gap-2" onClick={cerrarMenu}>
+          {/* Brand — extremo izquierdo */}
+          <NavLink
+            to="/"
+            className="brand d-flex align-items-center gap-2"
+            onClick={cerrarMenu}
+            style={{ flexShrink: 0 }}
+          >
             <Logo width={28} height={33} />
             Tech<span className="brand-accent">Nova</span>
           </NavLink>
 
-          {/* Links desktop */}
-          <div className="nav-links d-none d-md-flex">
-            <NavLink to="/" className={linkClass} end>Inicio</NavLink>
-            <NavLink to="/catalogo" className={linkClass}>Catálogo</NavLink>
-            {usuario && (
-              <NavLink to="/favoritos" className={linkClass}>Favoritos</NavLink>
-            )}
-            <NavLink to="/contacto" className={linkClass}>Contacto</NavLink>
-          </div>
+          {/* Todo lo demás — extremo derecho */}
+          <div className="navbar-right">
 
-          {/* Acciones desktop */}
-          <div className="nav-actions d-none d-md-flex">
-            <ThemeToggle />
-            {usuario ? (
-              <>
-                <NavLink to="/favoritos" className="nav-pill">
-                  <span className="pill-icon">♡</span>
-                  <span>{cantidadFavoritos}</span>
-                </NavLink>
-                <NavLink to="/carrito" className="nav-pill nav-pill-accent">
-                  <span className="pill-icon">🛒</span>
-                  <span>{cantidadTotal}</span>
-                </NavLink>
-                <NavLink to="/historial" className="nav-pill">
-                  <span className="pill-icon">📦</span>
-                  <span>Pedidos</span>
-                </NavLink>
-                <div className="nav-user">
-                  <NavLink to="/perfil" className="user-nombre" style={{ textDecoration: 'none' }}>
-                    {usuario.nombre.split(' ')[0]}
+            {/* Links desktop */}
+            <div className="nav-links d-none d-md-flex">
+              <NavLink to="/" className={linkClass} end>Inicio</NavLink>
+              <NavLink to="/catalogo" className={linkClass}>Catálogo</NavLink>
+              {usuario && (
+                <NavLink to="/favoritos" className={linkClass}>Favoritos</NavLink>
+              )}
+              <NavLink to="/contacto" className={linkClass}>Contacto</NavLink>
+            </div>
+
+            {/* Acciones desktop */}
+            <div className="nav-actions d-none d-md-flex">
+              <ThemeToggle />
+              {usuario ? (
+                <>
+                  <NavLink to="/favoritos" className="nav-pill">
+                    <span className="pill-icon">♡</span>
+                    <span>{cantidadFavoritos}</span>
                   </NavLink>
-                  <button className="btn-salir" onClick={cerrarSesion}>Salir</button>
-                </div>
-              </>
-            ) : (
-              <>
-                <NavLink to="/carrito" className="nav-pill nav-pill-accent">
-                  <span className="pill-icon">🛒</span>
-                  <span>{cantidadTotal}</span>
-                </NavLink>
-                <NavLink to="/login" className="nav-pill">Ingresar</NavLink>
-                <NavLink to="/registro" className="nav-pill nav-pill-accent">Registrarse</NavLink>
-              </>
-            )}
-          </div>
+                  <NavLink to="/carrito" className="nav-pill nav-pill-accent">
+                    <span className="pill-icon">🛒</span>
+                    <span>{cantidadTotal}</span>
+                  </NavLink>
+                  <NavLink to="/historial" className="nav-pill">
+                    <span className="pill-icon">📦</span>
+                    <span>Pedidos</span>
+                  </NavLink>
+                  <div className="nav-user">
+                    <NavLink to="/perfil" className="user-nombre" style={{ textDecoration: 'none' }}>
+                      {usuario.nombre.split(' ')[0]}
+                    </NavLink>
+                    <button className="btn-salir" onClick={cerrarSesion}>Salir</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <NavLink to="/carrito" className="nav-pill nav-pill-accent">
+                    <span className="pill-icon">🛒</span>
+                    <span>{cantidadTotal}</span>
+                  </NavLink>
+                  <NavLink to="/login" className="nav-pill">Ingresar</NavLink>
+                  <NavLink to="/registro" className="nav-pill nav-pill-accent">Registrarse</NavLink>
+                </>
+              )}
+            </div>
 
-          {/* Hamburguesa mobile */}
-          <button
-            className="hamburger d-md-none"
-            onClick={() => setAbierto((a) => !a)}
-            aria-label="Abrir menú"
-          >
-            {abierto ? '✕' : '☰'}
-          </button>
+            {/* Hamburguesa + toggle mobile — extremo derecho */}
+            <div className="d-flex d-md-none align-items-center gap-2">
+              <ThemeToggle />
+              <button
+                className="hamburger"
+                onClick={() => setAbierto((a) => !a)}
+                aria-label="Abrir menú"
+              >
+                {abierto ? '✕' : '☰'}
+              </button>
+            </div>
+
+          </div>
         </div>
 
         {/* Menú mobile */}
         {abierto && (
           <div className="mobile-menu">
-
-            {/* Toggle de tema en mobile ← nuevo */}
-            <div className="d-flex align-items-center justify-content-between">
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Apariencia</span>
-              <ThemeToggle />
-            </div>
-
-            <div className="mobile-divider" />
-
             <NavLink to="/" className={linkClass} end onClick={cerrarMenu}>Inicio</NavLink>
             <NavLink to="/catalogo" className={linkClass} onClick={cerrarMenu}>Catálogo</NavLink>
             <NavLink to="/contacto" className={linkClass} onClick={cerrarMenu}>Contacto</NavLink>
@@ -115,15 +119,9 @@ function Navbar({ cantidadFavoritos }) {
                 <div className="mobile-divider" />
                 <div className="mobile-user">
                   <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                    Hola,{' '}
-                    <strong style={{ color: 'var(--text)' }}>
-                      {usuario.nombre.split(' ')[0]}
-                    </strong>
+                    Hola, <strong style={{ color: 'var(--text)' }}>{usuario.nombre.split(' ')[0]}</strong>
                   </span>
-                  <button
-                    className="btn-salir"
-                    onClick={() => { cerrarSesion(); cerrarMenu() }}
-                  >
+                  <button className="btn-salir" onClick={() => { cerrarSesion(); cerrarMenu() }}>
                     Cerrar sesión
                   </button>
                 </div>
